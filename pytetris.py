@@ -19,6 +19,19 @@ Y_MAX = 20
 INIT_SPEED = 15  # init block drop speed
 clock2 = pygame.time.Clock()
 
+###########################
+from colors import *
+
+GRID_SIZE = 20
+def draw_box(screen, x, y, c):
+        lighter = calc_flash(c, 30)
+        darker = calc_brightness(c, 0.7)
+        pygame.draw.rect(screen, lighter, (x, y, GRID_SIZE-2,GRID_SIZE-2), 0)
+        drawx = x + GRID_SIZE-2
+        drawy = y + GRID_SIZE-2
+        pygame.draw.polygon(screen, darker, ((x,drawy),(drawx,y),(drawx,drawy)), 0)
+        pygame.draw.rect(screen, c, (x+3, y+3, GRID_SIZE-7, GRID_SIZE-7),0)
+
 
 def move_left(block, grid):
 	if block.type == 0:  # BAR
@@ -844,7 +857,8 @@ class Block:
 		for i in range(0, 4):
 			for j in range(0, 4):
 				if self.block[self.direction][j][i] == 1 :
-					pygame.draw.rect(screen, COLOR[self.type], Rect(x+i*20, y+j*20, 20, 20))
+#					pygame.draw.rect(screen, COLOR[self.type], Rect(x+i*20, y+j*20, 20, 20))
+					draw_box(screen, x+i*20, y+j*20, COLOR[self.type])
 
 
 class Grid:
@@ -877,7 +891,8 @@ class Grid:
 			for j in range(0, 10):
 				if self.grid[i][j] < 8:
 					color_index = self.grid[i][j]
-					pygame.draw.rect(screen, COLOR[color_index], Rect(j*20, i*20, 20, 20))
+#					pygame.draw.rect(screen, COLOR[color_index], Rect(j*20, i*20, 20, 20))
+					draw_box(screen, j*20, i*20, COLOR[color_index])
 
 
 	def check_tetris(self):
@@ -967,6 +982,7 @@ class Game:
 
 	def begin_game(self):
 		pygame.init()
+		pygame.key.set_repeat(60)
 
 		self.screen = pygame.display.set_mode((200,400), 0, 32)
 		pygame.display.set_caption("PyTetris--0.0.2-dev")
