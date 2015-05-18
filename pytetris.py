@@ -16,7 +16,8 @@ Date = '2008-02-18'
 SHAPES = (BAR, BLOCK, TOE, SHAPE_S, SHAPE_Z, SHAPE_F, SHAPE_7)
 X_MAX = 10
 Y_MAX = 20
-speed = 20  # init block drop speed
+INIT_SPEED = 15  # init block drop speed
+clock2 = pygame.time.Clock()
 
 
 def move_left(block, grid):
@@ -327,7 +328,6 @@ def move_down(block, grid):
 				grid.grid[block.blocky+2][block.blockx+3] == 8):
 				return 1
 			else:
-#			if block.blocky+2 >= 20: return 0
 				grid.grid[block.blocky+1][block.blockx] = block.type
 				grid.grid[block.blocky+1][block.blockx+1] = block.type
 				grid.grid[block.blocky+1][block.blockx+2] = block.type
@@ -811,7 +811,7 @@ class Count:
 	def __init__(self, count):
 		self.count = count
 
-	def update_score(self, line):
+	def update_score(self, line, speed):
 		if line == 1:
 			self.count += 100
 		elif line == 2:
@@ -821,8 +821,10 @@ class Count:
 		elif line == 4:
 			self.count += 1000
 
-		global speed
-		speed += (self.count / 10000)
+		if speed <= 8:
+			speed = 8
+		else:
+			speed = INIT_SPEED - (self.count / 10000)
 
 	def draw_count(self, screen):
 #		print 'draw_count'
@@ -848,7 +850,6 @@ class Block:
 class Grid:
 	'''include all pieces of dropped blocks, 10*20'''
 	def __init__(self):
-#		self.grid = [[8, 8, 8, 8, 8, 8, 8, 8, 8, 8]] * Y_MAX
 		self.grid = [	[8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
 				[8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
 				[8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
@@ -870,8 +871,6 @@ class Grid:
 				[8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
 				[8, 8, 8, 8, 8, 8, 8, 8, 8, 8]]
 
-#		self.grid[14] = [1, 3, 4, 4, 5, 6, 8, 8, 2, 2]
-
 
 	def draw_grid(self, screen):
 		for i in range(0, 20):
@@ -887,11 +886,16 @@ class Grid:
 			if 8 not in self.grid[row]:
 				count += 1
 				self.update(row)
+				for _ in range(0, 2): # pause for a little time
+					clock2.tick(8)
+
 		return count
+
 
 	def update(self, row):
 		for i in range(0, row):
 			self.grid[row-i] = self.grid[row-i-1]
+			self.grid[0] =[8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
 
 
 class Game:
@@ -900,6 +904,7 @@ class Game:
 		self.block = Block(randint(0,6), 0)
 		self.count = Count(0)
 		self.score = 0
+		self.speed = 20
 		self.clock = pygame.time.Clock()
 
 		self.ready()
@@ -908,6 +913,16 @@ class Game:
 	def ready(self):
 #		if click_button == 1:
 			self.begin_game()
+
+
+	def check_game_over(self):
+		for i in range(0, 4):
+			for j in range(0, 4):
+				if(self.block.block[self.block.direction][i][j] != 0 and
+					self.grid.grid[j][i+3] != 8):
+						return 1
+
+		return 0
 
 
 	def check_event(self):
@@ -927,7 +942,11 @@ class Game:
 						move_y = +1 * 1
 					else:
 						self.block = Block(randint(0,6), 0)
-#						for i in range(0, 20): print self.grid.grid[i]
+						if self.check_game_over() == 1:
+						#	print 'Game Over'
+							raw_input('Game Over')
+							break
+
 				elif event.key == K_UP:
 					if change_direction(self.block, self.grid):
 						self.block.direction = (self.block.direction+1)%4
@@ -952,30 +971,33 @@ class Game:
 		self.screen = pygame.display.set_mode((200,400), 0, 32)
 		pygame.display.set_caption("PyTetris--0.0.2-dev")
 
-		i = 0
+#		print 'Begin Game...'
+
+		drop_interval = 0
 		while True:
 			self.clock.tick(60)
-			i = i+1
+			drop_interval = drop_interval+1
 			self.screen.fill((0,0,0))
 
 			self.check_event()
-			if i % 15 == 0:
-				i = 0
+			if drop_interval % (self.speed*3) == 0:
+				drop_interval = 0
 				moviable = move_down(self.block, self.grid)
 				if moviable == 1:
 					move_y = +1 * 1
 					self.block.blocky += move_y
 				else:
 					self.block = Block(randint(0,6), 0)
+					if self.check_game_over() == 1:
+					#	print 'Game Over'
+						raw_input('Game Over')
+						break
 
-
-#			print 'Begin Game...'
 			score = self.grid.check_tetris()
-			self.count.update_score(score)
+			self.count.update_score(score, self.speed)
 			self.count.draw_count(self.screen)
 			self.grid.draw_grid(self.screen)
 			self.block.draw_block(self.screen, self.block.blockx*20, self.block.blocky*20)
-#			self.check.game.over()
 
 			pygame.display.update()
 
