@@ -11,13 +11,14 @@ from random import *
 Name = 'PyTetris'
 Author = 'Deng Chunhui'
 Email = 'chunchengfh@gmail.com'
-Version = '0.0.2-dev'
-Date = '2008-02-18'
+Version = '0.2'
+Date = '2008-03-13'
 
 SHAPES = (BAR, BLOCK, TOE, SHAPE_S, SHAPE_Z, SHAPE_F, SHAPE_7)
 X_MAX = 10
 Y_MAX = 20
-INIT_SPEED = 12  # init block drop speed
+INIT_SPEED = 40  # init block drop speed
+drop_speed = INIT_SPEED
 clock2 = pygame.time.Clock()
 
 ###########################
@@ -684,7 +685,7 @@ def change_direction(block, grid):
 		return 1
 	elif block.type == 2:  # TOE
 		if block.direction == 0:
-			if block.blocky+2 > 20:
+			if block.blocky+2 >= 20:
 				return 0
 			elif (grid.grid[block.blocky][block.blockx] == 8 and
 				grid.grid[block.blocky][block.blockx+2] == 8 and
@@ -709,7 +710,7 @@ def change_direction(block, grid):
 					return 1
 			else: return 0
 		elif block.direction == 3:
-			if block.blockx+2 > 20:
+			if block.blockx+2 >= 20:
 				return 0
 			elif (grid.grid[block.blocky][block.blockx] == 8 and
 				grid.grid[block.blocky+2][block.blockx] == 8 and
@@ -826,7 +827,8 @@ class Count:
 		self.count = count
 		self.line = 0
 
-	def update_score(self, line, speed, screen):
+	def update_score(self, line, screen):
+		global drop_speed
 		if line == 0.1:
 			self.count += 10
 		else:
@@ -840,15 +842,15 @@ class Count:
 			elif line == 4:
 				self.count += 1000
 
-		if speed <= 6:
-			speed = 6
+		if drop_speed <= 6:
+			drop_speed = 6
 		else:
-			speed = INIT_SPEED - (self.count / 8000)
+			drop_speed = INIT_SPEED - (self.line / 8)
 		self.draw_count(screen)
 
 
 	def draw_highscore(self, screen):
-		myfont = pygame.font.SysFont("arial", 32)
+		myfont = pygame.font.SysFont("arial", 36)
 #		myfont.set_bold(1)
 		try:
 			file = open('highscore.dat', 'rb')
@@ -860,33 +862,54 @@ class Count:
 		highfont_pos = highfont_surface.get_rect()
 		highscore_pos = highscore_surface.get_rect()
 
-		highfont_pos.topright = (140, 20)
-		highscore_pos.topright = (140, 50)
+		highfont_pos.topright = (135, 20)
+		highscore_pos.topright = (135, 50)
 		screen.blit(highfont_surface, highfont_pos)
 		screen.blit(highscore_surface, highscore_pos)
 
 
+	def draw_author(self, screen):
+		myfont = pygame.font.SysFont("arial", 24)
+#		author_surface = myfont.render("By: Deng Chunhui", True, (0, 128, 64)) #, (255, 255, 0))
+		email_surface = myfont.render("chunchengfh", True, (0, 0, 64)) #, (255, 255, 0))
+		date_surface = myfont.render("( 2008 - 03 )", True, (0, 0, 64)) #, (255, 255, 0))
+#		author_pos = author_surface.get_rect()
+		email_pos = email_surface.get_rect()
+		date_pos = date_surface.get_rect()
+
+#		author_pos.topleft = (2, 340)
+		email_pos.topleft = (20, 360)
+		date_pos.topleft = (30, 380)
+
+#		screen.blit(author_surface, author_pos)
+		screen.blit(email_surface, email_pos)
+		screen.blit(date_surface, date_pos)
+
+
 	def draw_count(self, screen):
-#		pygame.display.set_caption("PyTetris score: %s" %self.count)
 		myfont = pygame.font.SysFont("arial", 36)
 #		myfont.set_bold(1)
 		scorefont_surface = myfont.render("Score", True, (0, 128, 64)) #, (255, 255, 0))
 		linefont_surface = myfont.render("Line", True, (0, 128, 64)) #, (255, 255, 0))
+		nextblock_surface = myfont.render("Next block", True, (0, 128, 64)) #, (255, 255, 0))
 		scorefont_pos = scorefont_surface.get_rect()
 		linefont_pos = linefont_surface.get_rect()
-		scorefont_pos.topright = (140, 20)
-		linefont_pos.topright = (140, 120)
+		nextblock_pos = nextblock_surface.get_rect()
+		scorefont_pos.topright = (120, 20)
+		linefont_pos.topright = (120, 120)
+		nextblock_pos.topright = (130, 250)
 
 		count_surface = myfont.render(str(self.count), True, (0, 255, 64)) #, (255, 255, 0))
 		line_surface = myfont.render(str(self.line), True, (0, 255, 64)) #, (255, 255, 0))
 		count_pos = count_surface.get_rect()
 		line_pos = line_surface.get_rect()
-		count_pos.topright = (140, 50)
-		line_pos.topright = (140, 150)
+		count_pos.topright = (120, 50)
+		line_pos.topright = (120, 150)
 
 		screen.fill((128, 128, 128))
 		screen.blit(scorefont_surface, scorefont_pos)
 		screen.blit(linefont_surface, linefont_pos)
+		screen.blit(nextblock_surface, nextblock_pos)
 		screen.blit(count_surface, count_pos)
 		screen.blit(line_surface, line_pos)
 
@@ -975,21 +998,24 @@ class Game:
 		pygame.init()
 		pygame.key.set_repeat(70)
 
-		self.topscreen = pygame.display.set_mode((520,400), 0, 32)
-		self.leftscreen = self.topscreen.subsurface((0,0), (160, 400))
-		self.rightscreen = self.topscreen.subsurface((360,0), (160, 400))
-		self.screen = self.topscreen.subsurface((160,0), (200, 400))
-		pygame.display.set_caption("PyTetris (version: 0.0.2-dev)")
+		self.topscreen = pygame.display.set_mode((480,400), 0, 32)
+		self.leftscreen = self.topscreen.subsurface((0,0), (140, 280))
+		self.nextblockscreen = self.topscreen.subsurface((20,280), (100, 100))
+		self.rightscreen = self.topscreen.subsurface((340,0), (140, 400))
+		self.screen = self.topscreen.subsurface((140,0), (200, 400))
+		pygame.display.set_caption("PyTetris (version: " + Version + ")")
 		self.topscreen.fill((128, 128, 128))
 
 		self.grid = Grid()
 		self.block = Block(randint(0,6), 0)
+		self.nextblock = randint(0,6)
+		self.draw_nextblock(self.nextblock, self.nextblockscreen)
 		self.count = Count(0)
 		self.score = 0
-		self.speed = 20
 		self.clock = pygame.time.Clock()
 
 		self.count.draw_highscore(self.rightscreen)
+		self.count.draw_author(self.rightscreen)
 		self.count.draw_count(self.leftscreen)
 		self.ready()
 
@@ -998,10 +1024,36 @@ class Game:
 #		if click_button == 1:
 			self.begin_game()
 
-	def game_over(self):
+
+	def draw_nextblock(self, type, screen):
+		screen.fill((0,0,0))
+		block = SHAPES[type] # [self.direction]
+		for i in range(0, 4):
+			for j in range(0, 4):
+				if block[0][j][i] == 1 :
+					draw_box(screen, 10+i*20, 10+j*20, COLOR[type])
+
+
+	def game_over(self, screen):
 		self.count.save_highscore()
-		raw_input('Game over')
-		sys.exit()
+
+		myfont = pygame.font.SysFont("arial", 38)
+#		myfont.set_bold(1)
+#		gameover_surface = myfont.render(" Game Over! ", True, (0, 128, 64), (132, 196, 60))
+		gameover_surface = myfont.render(" Game Over! ", True, (0, 128, 64), (128, 128, 128))
+		gameover_pos = gameover_surface.get_rect()
+		gameover_pos.topleft = (15, 170)
+
+#		self.block.draw_block(self.screen, self.block.blockx*20, self.block.blocky*20)
+		self.grid.draw_grid(self.screen)
+		screen.blit(gameover_surface, gameover_pos)
+		pygame.display.update()
+
+		while True:
+			time.sleep(0.1)
+			for event in pygame.event.get():
+				if event.type == QUIT:
+					sys.exit()
 
 
 	def check_game_over(self):
@@ -1021,6 +1073,16 @@ class Game:
 				sys.exit()
 
 			if event.type == KEYDOWN:
+				if event.key == K_p or event.key == K_SPACE:
+				    while True:
+					time.sleep(0.1)
+					for event in pygame.event.get():
+						if event.type == QUIT:
+							sys.exit()
+						if event.type == KEYDOWN:
+							if event.key == K_p or event.key == K_SPACE:
+								return
+
 				if event.key == K_LEFT:
 					move_x = -1 * move_left(self.block, self.grid)
 				elif event.key == K_RIGHT:
@@ -1030,13 +1092,13 @@ class Game:
 					if moviable == 1:
 						move_y = +1 * 1
 					else:
-						self.count.update_score(0.1, self.speed, self.leftscreen)
-						self.block = Block(randint(0,6), 0)
+						self.count.update_score(0.1, self.leftscreen)
+						self.block = Block(self.nextblock, 0)
+						self.nextblock = randint(0,6)
+						self.draw_nextblock(self.nextblock, self.nextblockscreen)
+
 						if self.check_game_over() == 1:
-						#	print 'Game Over'
-						#	raw_input('Game Over')
-						#	break
-							self.game_over()
+							self.game_over(self.screen)
 
 				elif event.key == K_UP:
 					if change_direction(self.block, self.grid):
@@ -1066,26 +1128,26 @@ class Game:
 			self.screen.fill((0,0,0))
 
 			self.check_event()
-			if drop_interval % (self.speed*3) == 0:
+			if drop_interval % (drop_speed) == 0:
 				drop_interval = 0
 				moviable = move_down(self.block, self.grid)
 				if moviable == 1:
 					move_y = +1 * 1
 					self.block.blocky += move_y
 				else:
-					self.count.update_score(0.1, self.speed, self.leftscreen)
-					self.block = Block(randint(0,6), 0)
+					self.count.update_score(0.1, self.leftscreen)
+					self.block = Block(self.nextblock, 0)
+					self.nextblock = randint(0,6)
+					self.draw_nextblock(self.nextblock, self.nextblockscreen)
+
 					if self.check_game_over() == 1:
-					#	print 'Game Over'
-					#	raw_input('Game Over')
-					#	break
-						self.game_over()
+						self.game_over(self.screen)
 
 			score = self.grid.check_tetris()
 			if score > 0:
-				self.count.update_score(score, self.speed, self.leftscreen)
-			self.grid.draw_grid(self.screen)
+				self.count.update_score(score, self.leftscreen)
 			self.block.draw_block(self.screen, self.block.blockx*20, self.block.blocky*20)
+			self.grid.draw_grid(self.screen)
 
 			pygame.display.update()
 
