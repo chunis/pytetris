@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys, time
+import cPickle
 import pygame
 from pygame.locals import *
 
@@ -16,7 +17,7 @@ Date = '2008-02-18'
 SHAPES = (BAR, BLOCK, TOE, SHAPE_S, SHAPE_Z, SHAPE_F, SHAPE_7)
 X_MAX = 10
 Y_MAX = 20
-INIT_SPEED = 15  # init block drop speed
+INIT_SPEED = 12  # init block drop speed
 clock2 = pygame.time.Clock()
 
 ###########################
@@ -823,25 +824,81 @@ class Count:
 	'''count the score'''
 	def __init__(self, count):
 		self.count = count
+		self.line = 0
 
-	def update_score(self, line, speed):
-		if line == 1:
-			self.count += 100
-		elif line == 2:
-			self.count += 300
-		elif line == 3:
-			self.count += 600
-		elif line == 4:
-			self.count += 1000
-
-		if speed <= 8:
-			speed = 8
+	def update_score(self, line, speed, screen):
+		if line == 0.1:
+			self.count += 10
 		else:
-			speed = INIT_SPEED - (self.count / 10000)
+			self.line += line
+			if line == 1:
+				self.count += 100
+			elif line == 2:
+				self.count += 300
+			elif line == 3:
+				self.count += 600
+			elif line == 4:
+				self.count += 1000
+
+		if speed <= 6:
+			speed = 6
+		else:
+			speed = INIT_SPEED - (self.count / 8000)
+		self.draw_count(screen)
+
+
+	def draw_highscore(self, screen):
+		myfont = pygame.font.SysFont("arial", 32)
+#		myfont.set_bold(1)
+		try:
+			file = open('highscore.dat', 'rb')
+			self.highscore = str(cPickle.load(file))
+		except:
+			self.highscore = '0'
+		highfont_surface = myfont.render("High Score", True, (0, 128, 64)) #, (255, 255, 0))
+		highscore_surface = myfont.render(self.highscore, True, (0, 255, 64)) #, (255, 255, 0))
+		highfont_pos = highfont_surface.get_rect()
+		highscore_pos = highscore_surface.get_rect()
+
+		highfont_pos.topright = (140, 20)
+		highscore_pos.topright = (140, 50)
+		screen.blit(highfont_surface, highfont_pos)
+		screen.blit(highscore_surface, highscore_pos)
+
 
 	def draw_count(self, screen):
-#		print 'draw_count'
-		pygame.display.set_caption("PyTetris score: %s" %self.count)
+#		pygame.display.set_caption("PyTetris score: %s" %self.count)
+		myfont = pygame.font.SysFont("arial", 36)
+#		myfont.set_bold(1)
+		scorefont_surface = myfont.render("Score", True, (0, 128, 64)) #, (255, 255, 0))
+		linefont_surface = myfont.render("Line", True, (0, 128, 64)) #, (255, 255, 0))
+		scorefont_pos = scorefont_surface.get_rect()
+		linefont_pos = linefont_surface.get_rect()
+		scorefont_pos.topright = (140, 20)
+		linefont_pos.topright = (140, 120)
+
+		count_surface = myfont.render(str(self.count), True, (0, 255, 64)) #, (255, 255, 0))
+		line_surface = myfont.render(str(self.line), True, (0, 255, 64)) #, (255, 255, 0))
+		count_pos = count_surface.get_rect()
+		line_pos = line_surface.get_rect()
+		count_pos.topright = (140, 50)
+		line_pos.topright = (140, 150)
+
+		screen.fill((128, 128, 128))
+		screen.blit(scorefont_surface, scorefont_pos)
+		screen.blit(linefont_surface, linefont_pos)
+		screen.blit(count_surface, count_pos)
+		screen.blit(line_surface, line_pos)
+
+	
+	def save_highscore(self):
+		if self.count > int(self.highscore):
+			try:
+				file = open('highscore.dat', 'wb')
+				cPickle.dump(self.count, file, 1)
+			except:
+				print 'Why?'
+				pass
 
 
 class Block:
@@ -915,6 +972,16 @@ class Grid:
 
 class Game:
 	def __init__(self):
+		pygame.init()
+		pygame.key.set_repeat(70)
+
+		self.topscreen = pygame.display.set_mode((520,400), 0, 32)
+		self.leftscreen = self.topscreen.subsurface((0,0), (160, 400))
+		self.rightscreen = self.topscreen.subsurface((360,0), (160, 400))
+		self.screen = self.topscreen.subsurface((160,0), (200, 400))
+		pygame.display.set_caption("PyTetris (version: 0.0.2-dev)")
+		self.topscreen.fill((128, 128, 128))
+
 		self.grid = Grid()
 		self.block = Block(randint(0,6), 0)
 		self.count = Count(0)
@@ -922,12 +989,19 @@ class Game:
 		self.speed = 20
 		self.clock = pygame.time.Clock()
 
+		self.count.draw_highscore(self.rightscreen)
+		self.count.draw_count(self.leftscreen)
 		self.ready()
 
 
 	def ready(self):
 #		if click_button == 1:
 			self.begin_game()
+
+	def game_over(self):
+		self.count.save_highscore()
+		raw_input('Game over')
+		sys.exit()
 
 
 	def check_game_over(self):
@@ -956,11 +1030,13 @@ class Game:
 					if moviable == 1:
 						move_y = +1 * 1
 					else:
+						self.count.update_score(0.1, self.speed, self.leftscreen)
 						self.block = Block(randint(0,6), 0)
 						if self.check_game_over() == 1:
 						#	print 'Game Over'
-							raw_input('Game Over')
-							break
+						#	raw_input('Game Over')
+						#	break
+							self.game_over()
 
 				elif event.key == K_UP:
 					if change_direction(self.block, self.grid):
@@ -981,12 +1057,6 @@ class Game:
 
 
 	def begin_game(self):
-		pygame.init()
-		pygame.key.set_repeat(60)
-
-		self.screen = pygame.display.set_mode((200,400), 0, 32)
-		pygame.display.set_caption("PyTetris--0.0.2-dev")
-
 #		print 'Begin Game...'
 
 		drop_interval = 0
@@ -1003,15 +1073,17 @@ class Game:
 					move_y = +1 * 1
 					self.block.blocky += move_y
 				else:
+					self.count.update_score(0.1, self.speed, self.leftscreen)
 					self.block = Block(randint(0,6), 0)
 					if self.check_game_over() == 1:
 					#	print 'Game Over'
-						raw_input('Game Over')
-						break
+					#	raw_input('Game Over')
+					#	break
+						self.game_over()
 
 			score = self.grid.check_tetris()
-			self.count.update_score(score, self.speed)
-			self.count.draw_count(self.screen)
+			if score > 0:
+				self.count.update_score(score, self.speed, self.leftscreen)
 			self.grid.draw_grid(self.screen)
 			self.block.draw_block(self.screen, self.block.blockx*20, self.block.blocky*20)
 
