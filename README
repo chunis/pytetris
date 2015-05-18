@@ -1,0 +1,8 @@
+PyTetris is a very simple Tetris clone write by python+pygame.
+To run it, you need to have python and pygame installed in your system.
+
+Run it is very simple. Under Windows, just double click "pytetris.py".
+And under linux, at first change your current work directory to where the
+source code is, then issue either command in the terminal should be enough:
+$ ./pytetris.py
+$ python pytetris.py
