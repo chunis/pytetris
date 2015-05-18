@@ -1,2 +1,2 @@
-BAR, BLOCK, TOE:  move_left, move_right, move_down
+BAR, BLOCK, TOE, SHAPE_S, SHAPE_Z, SHAPE_F, SHAPE_7:  move_left, move_right, move_down
 count score

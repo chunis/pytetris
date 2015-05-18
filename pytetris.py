@@ -31,10 +31,10 @@ def move_left(block, grid):
 			else:	return 0
 		elif block.direction == 1 or block.direction == 3:
 			if block.blockx <= 0: return 0
-			elif grid.grid[block.blocky][block.blockx-1] != 8:
-				return 0
-			else:
+			elif grid.grid[block.blocky][block.blockx-1] == 8:
 				return 1
+			else:
+				return 0
 	elif block.type == 1:  # BLOCK
 		if block.blockx+1 <= 0:
 			return 0
@@ -72,14 +72,93 @@ def move_left(block, grid):
 					return 1
 			else:	return 0
 	elif block.type == 3:  # SHAPE_S
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx-1] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blockx+1 <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 4:  # SHAPE_Z
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky+1][block.blockx-1] == 8 and
+				grid.grid[block.blocky+2][block.blockx] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blockx+1 <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx+1] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 5:  # SHAPE_F
-		return 1
+		if block.direction == 0:
+			if block.blockx+1 <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky+1][block.blockx-1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8):
+				return 1
+			else:
+				return 0
+		if block.direction == 2:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx-1] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 3:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx-1] == 8 and
+				grid.grid[block.blocky+1][block.blockx-1] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 6:  # SHAPE_7
-		return 1
-	return 1
+		if block.direction == 0:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx-1] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx+1] == 8 and
+				grid.grid[block.blocky+1][block.blockx-1] == 8):
+				return 1
+			else:
+				return 0
+		if block.direction == 2:
+			if block.blockx+1 <= 0: return 0
+			elif (grid.grid[block.blocky][block.blockx] == 8 and
+				grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 3:
+			if block.blockx <= 0: return 0
+			elif (grid.grid[block.blocky+1][block.blockx-1] == 8 and
+				grid.grid[block.blocky+2][block.blockx-1] == 8):
+				return 1
+			else:
+				return 0
 
 def move_right(block, grid):
 #	if block.blockx >= (10-3): return 0
@@ -142,14 +221,94 @@ def move_right(block, grid):
 					return 1
 			else:	return 0
 	elif block.type == 3:  # SHAPE_S
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky+1][block.blockx+3] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+2] == 8 and
+				grid.grid[block.blocky+1][block.blockx+3] == 8 and
+				grid.grid[block.blocky+2][block.blockx+3] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 4:  # SHAPE_Z
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky+1][block.blockx+2] == 8 and
+				grid.grid[block.blocky+2][block.blockx+3] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+3] == 8 and
+				grid.grid[block.blocky+1][block.blockx+3] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 5:  # SHAPE_F
-		return 1
+		if block.direction == 0:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+3] == 8 and
+				grid.grid[block.blocky+1][block.blockx+2] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky+1][block.blockx+3] == 8 and
+				grid.grid[block.blocky+2][block.blockx+3] == 8):
+				return 1
+			else:
+				return 0
+		if block.direction == 2:
+			if block.blockx+2 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+2] == 8 and
+				grid.grid[block.blocky+1][block.blockx+2] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 3:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+1] == 8 and
+				grid.grid[block.blocky+1][block.blockx+3] == 8):
+				return 1
+			else:
+				return 0
 	elif block.type == 6:  # SHAPE_7
+		if block.direction == 0:
+			if block.blockx+2 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+2] == 8 and
+				grid.grid[block.blocky+1][block.blockx+2] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 1:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+3] == 8 and
+				grid.grid[block.blocky+1][block.blockx+3] == 8):
+				return 1
+			else:
+				return 0
+		if block.direction == 2:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky][block.blockx+2] == 8 and
+				grid.grid[block.blocky+1][block.blockx+2] == 8 and
+				grid.grid[block.blocky+2][block.blockx+3] == 8):
+					return 1
+			else:	return 0
+		elif block.direction == 3:
+			if block.blockx+3 >= 10: return 0
+			elif (grid.grid[block.blocky+1][block.blockx+3] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8):
+				return 1
+			else:
+				return 0
 		return 1
-	return 1
 
 def move_down(block, grid):
 	if block.type == 0:  # BAR
@@ -256,7 +415,7 @@ def move_down(block, grid):
 				return 0
 
 			elif (grid.grid[block.blocky+3][block.blockx+1] == 8 and
-				grid.grid[block.blocky][block.blockx+2] == 8):
+				grid.grid[block.blocky+2][block.blockx] == 8):
 				return 1
 			else:
 				grid.grid[block.blocky][block.blockx+1] = block.type
@@ -265,13 +424,221 @@ def move_down(block, grid):
 				grid.grid[block.blocky+1][block.blockx] = block.type
 				return 0
 	elif block.type == 3:  # SHAPE_S
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx] == 8 and
+				grid.grid[block.blocky+3][block.blockx+1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+2][block.blockx+1] == 8 and
+				grid.grid[block.blocky+3][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
 	elif block.type == 4:  # SHAPE_Z
-		return 1
+		if block.direction == 0 or block.direction == 2:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+2][block.blockx] == 8 and
+				grid.grid[block.blocky+3][block.blockx+1] == 8 and
+				grid.grid[block.blocky+3][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+		elif block.direction == 1 or block.direction == 3:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx+1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
 	elif block.type == 5:  # SHAPE_F
-		return 1
+		if block.direction == 0:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx+1] == 8 and
+				grid.grid[block.blocky+1][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+		elif block.direction == 1:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+2][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8 and
+				grid.grid[block.blocky+3][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+		elif block.direction == 2:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx] == 8 and
+				grid.grid[block.blocky+3][block.blockx+1] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				return 0
+		elif block.direction == 3:
+			if block.blocky+2 >= 20:
+				grid.grid[block.blocky][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+2][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				return 0
 	elif block.type == 6:  # SHAPE_7
-		return 1
+		if block.direction == 0:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx] = block.type
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+1][block.blockx] == 8 and
+				grid.grid[block.blocky+3][block.blockx+1] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx] = block.type
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				return 0
+
+		elif block.direction == 1:
+			if block.blocky+2 >= 20:
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+2][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+2] = block.type
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				return 0
+		elif block.direction == 2:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx+1] == 8 and
+				grid.grid[block.blocky+3][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+1] = block.type
+				grid.grid[block.blocky+2][block.blockx+2] = block.type
+				return 0
+		elif block.direction == 3:
+			if block.blocky+3 >= 20:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				return 0
+
+			elif (grid.grid[block.blocky+3][block.blockx] == 8 and
+				grid.grid[block.blocky+2][block.blockx+1] == 8 and
+				grid.grid[block.blocky+2][block.blockx+2] == 8):
+				return 1
+			else:
+				grid.grid[block.blocky+1][block.blockx] = block.type
+				grid.grid[block.blocky+1][block.blockx+1] = block.type
+				grid.grid[block.blocky+1][block.blockx+2] = block.type
+				grid.grid[block.blocky+2][block.blockx] = block.type
+				return 0
 	return 1
 
 
@@ -389,7 +756,7 @@ class Grid:
 class Game:
 	def __init__(self):
 		self.grid = Grid()
-		self.block = Block(randint(0,2), 0)
+		self.block = Block(randint(0,6), 0)
 		self.count = Count(0)
 		self.score = 0
 		self.ready()
@@ -440,7 +807,7 @@ class Game:
 					if moviable == 1:
 						move_y = +1 * 1
 					else:
-						self.block = Block(randint(0,2), 0)
+						self.block = Block(randint(0,6), 0)
 #						for i in range(0, 20): print self.grid.grid[i]
 				elif event.key == K_UP:
 					if change_direction(self.block, self.grid):
