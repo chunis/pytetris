@@ -850,7 +850,7 @@ class Count:
 
 
 	def draw_highscore(self, screen):
-		myfont = pygame.font.SysFont("arial", 36)
+		myfont = pygame.font.SysFont("arial", 24)
 #		myfont.set_bold(1)
 		try:
 			file = open('highscore.dat', 'rb')
@@ -869,7 +869,7 @@ class Count:
 
 
 	def draw_author(self, screen):
-		myfont = pygame.font.SysFont("arial", 24)
+		myfont = pygame.font.SysFont("arial", 20)
 #		author_surface = myfont.render("By: Deng Chunhui", True, (0, 128, 64)) #, (255, 255, 0))
 		email_surface = myfont.render("chunchengfh", True, (0, 0, 64)) #, (255, 255, 0))
 		date_surface = myfont.render("( 2008 - 03 )", True, (0, 0, 64)) #, (255, 255, 0))
@@ -887,7 +887,7 @@ class Count:
 
 
 	def draw_count(self, screen):
-		myfont = pygame.font.SysFont("arial", 36)
+		myfont = pygame.font.SysFont("arial", 24)
 #		myfont.set_bold(1)
 		scorefont_surface = myfont.render("Score", True, (0, 128, 64)) #, (255, 255, 0))
 		linefont_surface = myfont.render("Line", True, (0, 128, 64)) #, (255, 255, 0))
